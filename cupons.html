@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Início - CUPOM DA VEZ</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: #fde910; /* Fundo amarelo */
+      overflow: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #fff; /* Topo branco */
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      height: 30px;
+    }
+
+    .saldo-container {
+      background-color: #fde910;
+      color: #000;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-right: 60px;
+      border: 2px solid #000;
+    }
+
+    .content {
+      margin-top: 80px;
+      padding: 20px;
+      padding-bottom: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .captcha-container {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid #000;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .captcha-titulo {
+      color: #000;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .captcha-imagem-container {
+      margin-bottom: 20px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f5f5;
+    }
+
+    .captcha-imagem {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .captcha-texto {
+      color: #000;
+      font-size: 16px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .form-label {
+      display: block;
+      color: #000;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .form-input:focus {
+      border-color: #000;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .botao-verificar {
+      background-color: #fde910; /* Fundo amarelo */
+      color: #000; /* Texto preto */
+      border: 2px solid #000;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    .botao-verificar:hover {
+      background-color: #000;
+      color: #fde910;
+    }
+
+    .botao-verificar:disabled {
+      background-color: #cccccc;
+      color: #666666;
+      border-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .mensagem {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+    }
+
+    .mensagem.sucesso {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .mensagem.erro {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    .premio-info {
+      background-color: #000;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .loading-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .loading-spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #000;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #000;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .loading-subtext {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .esgotado-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .esgotado-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .esgotado-texto {
+      color: #000;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .esgotado-subtexto {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .contador-container {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .contador-texto {
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* Pop-up de boas-vindas */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none; /* Alterado para none por padrão */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup {
+      background-color: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .popup.verde {
+      background-color: #d4edda;
+      border: 2px solid #c3e6cb;
+    }
+
+    .popup-titulo {
+      color: #000;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .popup-loading {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #000;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .popup-fechar {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #000;
+      display: none;
+    }
+
+    .popup.verde .popup-fechar {
+      display: block;
+    }
+
+    /* Dock estilo iOS - MODIFICADO */
+    .ios-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 15px 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      width: 80%;
+      max-width: 400px;
+      justify-content: space-around;
+    }
+
+    .dock-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #fff; /* Fundo branco */
+      color: #7c7c7c; /* Texto 50% mais escuro */
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .dock-button.inicio-selecionada {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .dock-button:hover {
+      transform: translateY(-8px) scale(1.1);
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .dock-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .dock-label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 480px) {
+      .logo {
+        height: 25px;
+      }
+
+      .saldo-container {
+        padding: 6px 12px;
+        font-size: 14px;
+        margin-right: 10px;
+      }
+
+      .content {
+        margin-top: 70px;
+        padding: 15px;
+        padding-bottom: 120px;
+      }
+
+      .captcha-container {
+        padding: 20px;
+        width: 100%;
+      }
+
+      .captcha-titulo {
+        font-size: 20px;
+      }
+
+      .captcha-imagem-container {
+        height: 180px;
+      }
+
+      .ios-dock {
+        padding: 12px 20px;
+        width: 90%;
+      }
+
+      .dock-button {
+        width: 60px;
+        height: 60px;
+      }
+
+      .dock-icon {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pop-up de boas-vindas -->
+  <div class="popup-overlay" id="popup-overlay">
+    <div class="popup" id="popup">
+      <span class="popup-fechar" id="popup-fechar">&times;</span>
+      <div class="popup-titulo" id="popup-titulo">Aguarde um pouco</div>
+      <div class="popup-loading" id="popup-loading"></div>
+      <div id="popup-mensagem"></div>
+    </div>
+  </div>
+
+  <div class="header">
+    <img src="images/logo.png" class="logo" alt="CUPOM DA VEZ">
+    <div class="saldo-container">
+      <span id="saldo">R$0</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Container principal do captcha -->
+    <div class="captcha-container" id="captcha-container">
+      <div class="captcha-titulo">Verifique o Cupom</div>
+      
+      <div class="captcha-imagem-container">
+        <img src="images/imagem1.jpg" alt="Imagem de verificação" class="captcha-imagem" id="captcha-imagem">
+      </div>
+      
+      <div class="captcha-texto">Valide o cupom acima:</div>
+      
+      <div class="form-group">
+        <label class="form-label" for="resposta-captcha">Sua resposta:</label>
+        <input type="text" class="form-input" id="resposta-captcha" placeholder="Digite sua resposta" maxlength="11">
+      </div>
+      
+      <button class="botao-verificar" id="botao-verificar">VERIFICAR RESPOSTA</button>
+      
+      <div class="mensagem" id="mensagem"></div>
+      
+      <div class="premio-info">
+        Prêmio: <span id="premio-valor">R$ 0,00</span> por resposta correta
+      </div>
+
+      <div class="contador-container">
+        <div class="contador-texto">Cupons Disponíveis: <span id="contador-captchas">0</span></div>
+      </div>
+    </div>
+
+    <!-- Tela de loading -->
+    <div class="loading-container" id="loading-container">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Carregando novos cupons...</div>
+      <div class="loading-subtext">Novos cupons disponíveis em: <span id="tempo-restante">06:00:00</span></div>
+    </div>
+
+    <!-- Tela de esgotado -->
+    <div class="esgotado-container" id="esgotado-container">
+      <div class="esgotado-icon">😴</div>
+      <div class="esgotado-texto">Todos os cupons foram resolvidos!</div>
+      <div class="esgotado-subtexto">Volte em algumas horas para mais cupons e mais prêmios.</div>
+      <div class="contador-container">
+        <div class="contador-texto">Novos cupons em: <span id="contador-esgotado">06:00:00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dock estilo iOS - MODIFICADO -->
+  <div class="ios-dock">
+    <a href="saque.html" class="dock-button">
+      <span class="dock-icon">💳</span>
+      <span class="dock-label">Saque</span>
+    </a>
+    <a href="cupons.html" class="dock-button inicio-selecionada">
+      <span class="dock-icon">🏠</span>
+      <span class="dock-label">Início</span>
+    </a>
+    <a href="conta.html" class="dock-button">
+      <span class="dock-icon">👤</span>
+      <span class="dock-label">Conta</span>
+    </a>
+  </div>
+
+  <script>
+    // ========== CONFIGURAÇÃO ==========
+    const INTERVALO_RECARGA = 6 * 60 * 60 * 1000; // 6 horas em milissegundos
+    const CUPONS_INICIAIS = 10; // Alterado para 10 cupons iniciais
+    const MIN_RECARGA = 1;
+    const MAX_RECARGA = 5;
+    const PREMIO_MINIMO = 11.73;
+    const PREMIO_MAXIMO = 27.94;
+    // ========== FIM DA CONFIGURAÇÃO ==========
+
+    // Banco de perguntas (50 captchas)
+    const perguntas = [
+      { imagem: "imagem1.jpg", resposta: "01 23 45 67" },
+      { imagem: "imagem2.jpg", resposta: "98 76 54 32" },
+      { imagem: "imagem3.jpg", resposta: "11 22 33 44" },
+      { imagem: "imagem4.jpg", resposta: "55 66 77 88" },
+      { imagem: "imagem5.jpg", resposta: "12 34 56 78" },
+      { imagem: "imagem6.jpg", resposta: "87 65 43 21" },
+      { imagem: "imagem7.jpg", resposta: "00 99 88 77" },
+      { imagem: "imagem8.jpg", resposta: "66 55 44 33" },
+      { imagem: "imagem9.jpg", resposta: "10 20 30 40" },
+      { imagem: "imagem10.jpg", resposta: "50 60 70 80" },
+      { imagem: "imagem11.jpg", resposta: "02 13 24 35" },
+      { imagem: "imagem12.jpg", resposta: "46 57 68 79" },
+      { imagem: "imagem13.jpg", resposta: "15 25 35 45" },
+      { imagem: "imagem14.jpg", resposta: "95 85 75 65" },
+      { imagem: "imagem15.jpg", resposta: "09 19 29 39" },
+      { imagem: "imagem16.jpg", resposta: "49 59 69 79" },
+      { imagem: "imagem17.jpg", resposta: "03 14 25 36" },
+      { imagem: "imagem18.jpg", resposta: "47 58 69 70" },
+      { imagem: "imagem19.jpg", resposta: "17 27 37 47" },
+      { imagem: "imagem20.jpg", resposta: "57 67 77 87" },
+      { imagem: "imagem21.jpg", resposta: "04 16 28 40" },
+      { imagem: "imagem22.jpg", resposta: "52 64 76 88" },
+      { imagem: "imagem23.jpg", resposta: "18 28 38 48" },
+      { imagem: "imagem24.jpg", resposta: "58 68 78 88" },
+      { imagem: "imagem25.jpg", resposta: "05 10 15 20" },
+      { imagem: "imagem26.jpg", resposta: "25 30 35 40" },
+      { imagem: "imagem27.jpg", resposta: "06 12 18 24" },
+      { imagem: "imagem28.jpg", resposta: "30 36 42 48" },
+      { imagem: "imagem29.jpg", resposta: "07 21 35 49" },
+      { imagem: "imagem30.jpg", resposta: "63 77 91 05" },
+      { imagem: "imagem31.jpg", resposta: "08 24 40 56" },
+      { imagem: "imagem32.jpg", resposta: "72 88 04 20" },
+      { imagem: "imagem33.jpg", resposta: "19 38 57 76" },
+      { imagem: "imagem34.jpg", resposta: "95 14 33 52" },
+      { imagem: "imagem35.jpg", resposta: "22 44 66 88" },
+      { imagem: "imagem36.jpg", resposta: "11 33 55 77" },
+      { imagem: "imagem37.jpg", resposta: "26 39 52 65" },
+      { imagem: "imagem38.jpg", resposta: "78 91 04 17" },
+      { imagem: "imagem39.jpg", resposta: "31 45 59 73" },
+      { imagem: "imagem40.jpg", resposta: "87 01 15 29" },
+      { imagem: "imagem41.jpg", resposta: "42 53 64 75" },
+      { imagem: "imagem42.jpg", resposta: "86 97 08 19" },
+      { imagem: "imagem43.jpg", resposta: "29 41 53 65" },
+      { imagem: "imagem44.jpg", resposta: "77 89 01 13" },
+      { imagem: "imagem45.jpg", resposta: "36 48 60 72" },
+      { imagem: "imagem46.jpg", resposta: "84 96 08 20" },
+      { imagem: "imagem47.jpg", resposta: "47 58 69 80" },
+      { imagem: "imagem48.jpg", resposta: "91 02 13 24" },
+      { imagem: "imagem49.jpg", resposta: "50 61 72 83" },
+      { imagem: "imagem50.jpg", resposta: "94 05 16 27" }
+    ];
+
+    // Variáveis de estado
+    let cuponsDisponiveis = 0;
+    let proximaRecarga = 0;
+    let intervaloContador = null;
+    let primeiraVisita = false;
+
+    // Carrega os dados ao iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verifica se é a primeira visita
+      primeiraVisita = localStorage.getItem('primeiraVisita') === null;
+      
+      if (primeiraVisita) {
+        // Mostra o pop-up de boas-vindas apenas no primeiro acesso
+        mostrarPopupBoasVindas();
+      } else {
+        // Inicia normalmente - SEM o pop-up
+        carregarSaldo();
+        inicializarCupons();
+        configurarEventos();
+        verificarEstadoCupons();
+      }
+    });
+
+    // Mostra o pop-up de boas-vindas apenas no primeiro acesso
+    function mostrarPopupBoasVindas() {
+      const popupOverlay = document.getElementById('popup-overlay');
+      const popup = document.getElementById('popup');
+      const popupTitulo = document.getElementById('popup-titulo');
+      const popupLoading = document.getElementById('popup-loading');
+      const popupMensagem = document.getElementById('popup-mensagem');
+      
+      // Exibe o pop-up
+      popupOverlay.style.display = 'flex';
+      
+      // Primeira etapa: "Aguarde um pouco"
+      popupTitulo.textContent = 'Aguarde um pouco';
+      popupLoading.style.display = 'block';
+      popupMensagem.textContent = 'Estamos preparando tudo para você...';
+      
+      // Segunda etapa após 3 segundos: "Restaurando seu saldo"
+      setTimeout(() => {
+        popupTitulo.textContent = 'Restaurando seu saldo';
+        popupMensagem.textContent = 'Recuperando seus recursos...';
+      }, 3000);
+      
+      // Terceira etapa após 4 segundos: Saldo restaurado
+      setTimeout(() => {
+        // Restaura o saldo
+        localStorage.setItem('saldo', '496.85');
+        localStorage.setItem('primeiraVisita', 'false');
+        
+        // Atualiza a interface
+        popup.classList.add('verde');
+        popupTitulo.textContent = 'Saldo Restaurado!';
+        popupLoading.style.display = 'none';
+        popupMensagem.innerHTML = 'Foram restaurados <strong>R$496,85</strong> em sua conta.';
+        
+        // Fecha o pop-up ao clicar no X
+        document.getElementById('popup-fechar').addEventListener('click', function() {
+          popupOverlay.style.display = 'none';
+          // Inicia a aplicação normalmente
+          carregarSaldo();
+          inicializarCupons();
+          configurarEventos();
+          verificarEstadoCupons();
+        });
+      }, 7000); // 3s + 4s = 7s
+    }
+
+    // Inicializa o sistema de cupons
+    function inicializarCupons() {
+      const agora = Date.now();
+      const ultimaRecarga = parseInt(localStorage.getItem('ultimaRecargaCupons') || agora);
+      const cuponsRestantes = parseInt(localStorage.getItem('cuponsDisponiveis') || CUPONS_INICIAIS);
+      
+      // Calcula quantas recargas ocorreram desde a última vez
+      const tempoPassado = agora - ultimaRecarga;
+      const recargasCompletas = Math.floor(tempoPassado / INTERVALO_RECARGA);
+      
+      if (recargasCompletas > 0) {
+        // Adiciona cupons das recargas completas
+        let novosCupons = 0;
+        for (let i = 0; i < recargasCompletas; i++) {
+          novosCupons += Math.floor(Math.random() * (MAX_RECARGA - MIN_RECARGA + 1)) + MIN_RECARGA;
+        }
+        
+        cuponsDisponiveis = cuponsRestantes + novosCupons;
+        proximaRecarga = ultimaRecarga + (recargasCompletas * INTERVALO_RECARGA) + INTERVALO_RECARGA;
+        localStorage.setItem('ultimaRecargaCupons', ultimaRecarga + (recargasCompletas * INTERVALO_RECARGA));
+      } else {
+        cuponsDisponiveis = cuponsRestantes;
+        proximaRecarga = ultimaRecarga + INTERVALO_RECARGA;
+      }
+      
+      localStorage.setItem('cuponsDisponiveis', cuponsDisponiveis);
+      atualizarContadorCupons();
+    }
+
+    // Verifica o estado dos cupons e exibe a tela apropriada
+    function verificarEstadoCupons() {
+      if (cuponsDisponiveis > 0) {
+        exibirTelaCaptcha();
+        sortearPergunta();
+        sortearPremio();
+      } else {
+        exibirTelaEsgotado();
+        iniciarContadorRecarga();
+      }
+    }
+
+    // Exibe a tela de captcha
+    function exibirTelaCaptcha() {
+      document.getElementById('captcha-container').style.display = 'block';
+      document.getElementById('loading-container').style.display = 'none';
+      document.getElementById('esgotado-container').style.display = 'none';
+    }
+
+    // Exibe a tela de carregamento
+    function exibirTelaLoading() {
+      document.getElementById('captcha-container').style.display = 'none';
+      document.getElementById('loading-container').style.display = 'flex';
+      document.getElementById('esgotado-container').style.display = 'none';
+    }
+
+    // Exibe a tela de esgotado
+    function exibirTelaEsgotado() {
+      document.getElementById('captcha-container').style.display = 'none';
+      document.getElementById('loading-container').style.display = 'none';
+      document.getElementById('esgotado-container').style.display = 'flex';
+    }
+
+    // Carrega o saldo do localStorage
+    function carregarSaldo() {
+      const saldo = localStorage.getItem('saldo') || '0';
+      const saldoFormatado = parseFloat(saldo).toFixed(2);
+      document.getElementById('saldo').textContent = `R$${saldoFormatado}`;
+    }
+
+    // Sorteia um valor de prêmio aleatório
+    function sortearPremio() {
+      const premio = (Math.random() * (PREMIO_MAXIMO - PREMIO_MINIMO) + PREMIO_MINIMO).toFixed(2);
+      document.getElementById('premio-valor').textContent = `R$ ${premio}`;
+      document.getElementById('captcha-imagem').dataset.premio = premio;
+    }
+
+    // Sorteia uma pergunta aleatória
+    function sortearPergunta() {
+      const indice = Math.floor(Math.random() * perguntas.length);
+      const pergunta = perguntas[indice];
+      
+      // Atualiza a imagem
+      document.getElementById('captcha-imagem').src = `images/${pergunta.imagem}`;
+      
+      // Armazena a resposta correta
+      document.getElementById('captcha-imagem').dataset.respostaCorreta = pergunta.resposta.toLowerCase();
+      
+      // Limpa o campo de resposta
+      document.getElementById('resposta-captcha').value = '';
+      
+      // Desabilita o botão de verificação
+      document.getElementById('botao-verificar').disabled = true;
+      
+      // Limpa mensagens anteriores
+      document.getElementById('mensagem').className = 'mensagem';
+    }
+
+    // Atualiza o contador de cupons disponíveis
+    function atualizarContadorCupons() {
+      document.getElementById('contador-captchas').textContent = cuponsDisponiveis;
+    }
+
+    // Configura os eventos da página
+    function configurarEventos() {
+      const respostaInput = document.getElementById('resposta-captcha');
+      const botaoVerificar = document.getElementById('botao-verificar');
+      
+      // Adiciona a formatação automática para o padrão xx xx xx xx
+      respostaInput.addEventListener('input', function(e) {
+        // Remove tudo que não é dígito
+        let value = this.value.replace(/\D/g, '');
+        
+        // Limita a 8 dígitos
+        if (value.length > 8) {
+          value = value.slice(0, 8);
+        }
+        
+        // Aplica a formatação xx xx xx xx
+        let formattedValue = '';
+        for (let i = 0; i < value.length; i++) {
+          if (i > 0 && i % 2 === 0) {
+            formattedValue += ' ';
+          }
+          formattedValue += value[i];
+        }
+        
+        this.value = formattedValue;
+        
+        // Habilita o botão quando houver texto no campo
+        botaoVerificar.disabled = !this.value.trim();
+      });
+      
+      // Permite enviar com a tecla Enter
+      respostaInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !botaoVerificar.disabled) {
+          botaoVerificar.click();
+        }
+      });
+      
+      // Configura o evento de verificação
+      botaoVerificar.addEventListener('click', function() {
+        // Desabilita o botão durante o processamento
+        botaoVerificar.disabled = true;
+        botaoVerificar.textContent = 'VERIFICANDO...';
+        
+        // Simula 2 segundos de carregamento
+        setTimeout(verificarResposta, 2000);
+      });
+    }
+
+    // Verifica if a resposta está correta
+    function verificarResposta() {
+      const respostaUsuario = document.getElementById('resposta-captcha').value.toLowerCase().trim();
+      const respostaCorreta = document.getElementById('captcha-imagem').dataset.respostaCorreta;
+      const premio = parseFloat(document.getElementById('captcha-imagem').dataset.premio);
+      const mensagem = document.getElementById('mensagem');
+      const botaoVerificar = document.getElementById('botao-verificar');
+      
+      // Restaura o texto do botão
+      botaoVerificar.textContent = 'VERIFICAR RESPOSTA';
+      
+      if (respostaUsuario === respostaCorreta) {
+        // Resposta correta - conceder prêmio
+        const saldoAtual = parseFloat(localStorage.getItem('saldo')) || 0;
+        const novoSaldo = saldoAtual + premio;
+        
+        // Atualiza o saldo
+        localStorage.setItem('saldo', novoSaldo.toFixed(2));
+        carregarSaldo();
+        
+        // Exibe mensagem de sucesso
+        mostrarMensagem(`Resposta correta! Você ganhou R$ ${premio.toFixed(2)} de saldo.`, 'sucesso');
+        
+        // Reduz o número de cupons disponíveis
+        cuponsDisponiveis--;
+        localStorage.setItem('cuponsDisponiveis', cuponsDisponiveis);
+        atualizarContadorCupons();
+        
+        // Verifica se ainda há cupons disponíveis
+        setTimeout(() => {
+          if (cuponsDisponiveis > 0) {
+            sortearPergunta();
+            sortearPremio();
+            botaoVerificar.disabled = false;
+          } else {
+            exibirTelaEsgotado();
+            iniciarContadorRecarga();
+          }
+        }, 2000);
+      } else {
+        // Resposta incorreta - passa para o próximo cupom
+        mostrarMensagem('Resposta incorreta. Passando para o próximo cupom...', 'erro');
+        
+        // Reduz o número de cupons disponíveis mesmo com resposta errada
+        cuponsDisponiveis--;
+        localStorage.setItem('cuponsDisponiveis', cuponsDisponiveis);
+        atualizarContadorCupons();
+        
+        setTimeout(() => {
+          if (cuponsDisponiveis > 0) {
+            sortearPergunta();
+            sortearPremio();
+            botaoVerificar.disabled = false;
+          } else {
+            exibirTelaEsgotado();
+            iniciarContadorRecarga();
+          }
+        }, 2000);
+      }
+    }
+
+    // Inicia o contador para a próxima recarga
+    function iniciarContadorRecarga() {
+      // Limpa qualquer intervalo existente
+      if (intervaloContador) {
+        clearInterval(intervaloContador);
+      }
+      
+      // Atualiza o contador imediatamente
+      atualizarContadorRecarga();
+      
+      // Configura o intervalo para atualizar o contador a cada segundo
+      intervaloContador = setInterval(atualizarContadorRecarga, 1000);
+    }
+
+    // Atualiza o contador de recarga
+    function atualizarContadorRecarga() {
+      const agora = Date.now();
+      const tempoRestante = proximaRecarga - agora;
+      
+      if (tempoRestante <= 0) {
+        // Hora de recarregar os cupons
+        clearInterval(intervaloContador);
+        recarregarCupons();
+        return;
+      }
+      
+      // Formata o tempo restante
+      const horas = Math.floor(tempoRestante / (1000 * 60 * 60));
+      const minutos = Math.floor((tempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((tempoRestante % (1000 * 60)) / 1000);
+      
+      const tempoFormatado = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+      
+      // Atualiza os contadores na interface
+      document.getElementById('tempo-restante').textContent = tempoFormatado;
+      document.getElementById('contador-esgotado').textContent = tempoFormatado;
+    }
+
+    // Recarrega os cupons
+    function recarregarCupons() {
+      exibirTelaLoading();
+      
+      // Simula um tempo de carregamento
+      setTimeout(() => {
+        // Adiciona novos cupons (entre 1 e 5)
+        const novosCupons = Math.floor(Math.random() * (MAX_RECARGA - MIN_RECARGA + 1)) + MIN_RECARGA;
+        cuponsDisponiveis = novosCupons;
+        proximaRecarga = Date.now() + INTERVALO_RECARGA;
+        
+        // Salva no localStorage
+        localStorage.setItem('cuponsDisponiveis', cuponsDisponiveis);
+        localStorage.setItem('ultimaRecargaCupons', Date.now());
+        
+        // Atualiza a interface
+        atualizarContadorCupons();
+        verificarEstadoCupons();
+      }, 2000); // Simula 2 segundos de carregamento
+    }
+
+    // Exibe mensagens de feedback
+    function mostrarMensagem(texto, tipo) {
+      const mensagem = document.getElementById('mensagem');
+      mensagem.textContent = texto;
+      mensagem.className = 'mensagem ' + tipo;
+    }
+  </script>
+</body>
+</html>

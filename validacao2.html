@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validação - CUPOM DA VEZ</title>
+  <script>
+    // Ao carregar a página, remove o saque pendente e a flag do popup, depois redireciona
+    document.addEventListener('DOMContentLoaded', function() {
+      localStorage.removeItem('saquePendente');
+      localStorage.removeItem('mostrarPopupGrande'); // Removendo a flag do popup
+      window.location.href = 'saque.html';
+    });
+  </script>
+</head>
+<body>
+  <p>Processando validação...</p>
+</body>
+</html>

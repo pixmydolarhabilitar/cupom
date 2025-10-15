@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Conta - CUPOM DA VEZ</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: #fde910;
+      overflow: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      height: 30px;
+    }
+
+    .saldo-container {
+      background-color: #fde910;
+      color: #000;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-right: 60px;
+      border: 2px solid #000;
+    }
+
+    .content {
+      margin-top: 80px;
+      padding: 20px;
+      padding-bottom: 120px;
+    }
+
+    .conta-container {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 2px solid #000;
+    }
+
+    .info-conta {
+      margin-bottom: 20px;
+    }
+
+    .info-titulo {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .info-valor {
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .botao-alterar {
+      background-color: #000;
+      color: #fde910;
+      border: 2px solid #000;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .botao-alterar:hover {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .plano-container {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 2px solid #000;
+    }
+
+    .plano-titulo {
+      color: #000;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .botao-contato {
+      background-color: #000;
+      color: #fde910;
+      border: 2px solid #000;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 30px;
+    }
+
+    .botao-contato:hover {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-conteudo {
+      background: linear-gradient(135deg, #fef08a, #facc15);
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 2px solid #000;
+      position: relative;
+    }
+
+    .modal-titulo {
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .modal-fechar {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #000;
+    }
+
+    .pix-tipo {
+      display: flex;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pix-opcao {
+      flex: 1;
+      min-width: 70px;
+      text-align: center;
+      padding: 10px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .pix-opcao.selecionado {
+      background-color: #000;
+      color: #fde910;
+      border-color: #000;
+    }
+
+    .pix-input-container {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .pix-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .pix-input:focus {
+      border-color: #fde910;
+      outline: none;
+      box-shadow: 0 0 8px #fde910;
+    }
+
+    .botao-salvar {
+      background-color: #000;
+      color: #fde910;
+      border: 2px solid #000;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    .botao-salvar:hover {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .planos-opcoes {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+    }
+
+    .planos-opcoes.ativo {
+      max-height: 1000px;
+    }
+
+    .plano-opcao {
+      text-align: left;
+      padding: 15px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .plano-opcao:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .plano-opcao.selecionado {
+      background-color: #fff;
+      color: #000;
+      border-color: #000;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .plano-opcao.vip1 {
+      border-color: #c0c0c0;
+    }
+
+    .plano-opcao.vip2 {
+      border-color: #ffd700;
+    }
+
+    .plano-opcao.elite {
+      border-color: #e5e4e2;
+    }
+
+    .plano-titulo-opcao {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .plano-beneficios {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      font-weight: normal;
+    }
+
+    .plano-beneficios li {
+      margin-bottom: 5px;
+    }
+
+    .plano-botao-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .plano-botao {
+      background-color: #000;
+      color: #fff;
+      border: 2px solid #000;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      width: auto;
+      min-width: 150px;
+    }
+
+    .plano-botao:hover {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .ios-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 15px 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      width: 80%;
+      max-width: 400px;
+      justify-content: space-around;
+    }
+
+    .dock-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #fff;
+      color: #7c7c7c;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .dock-button.conta-selecionada {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .dock-button:hover {
+      transform: translateY(-8px) scale(1.1);
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .dock-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .dock-label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 480px) {
+      .logo {
+        height: 25px;
+      }
+
+      .saldo-container {
+        padding: 6px 12px;
+        font-size: 14px;
+        margin-right: 10px;
+      }
+
+      .content {
+        margin-top: 70px;
+        padding: 15px;
+        padding-bottom: 120px;
+      }
+
+      .conta-container, .plano-container {
+        padding: 15px;
+      }
+
+      .pix-opcao {
+        padding: 8px;
+        font-size: 14px;
+        min-width: 60px;
+      }
+
+      .ios-dock {
+        padding: 12px 20px;
+        width: 90%;
+      }
+
+      .dock-button {
+        width: 60px;
+        height: 60px;
+      }
+
+      .dock-icon {
+        font-size: 24px;
+      }
+      
+      .plano-botao {
+        min-width: 130px;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="images/logo.png" class="logo" alt="CUPOM DA VEZ">
+    <div class="saldo-container">
+      <span id="saldo">R$0</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="conta-container">
+      <div class="info-conta">
+        <div class="info-titulo">E-mail</div>
+        <div class="info-valor" id="email-conta">carregando...</div>
+      </div>
+
+      <div class="info-conta">
+        <div class="info-titulo">Senha</div>
+        <div class="info-valor">••••••••</div>
+      </div>
+
+      <div class="info-conta">
+        <div class="info-titulo">Chave PIX Atual</div>
+        <div class="info-valor" id="pix-atual">Nenhuma chave PIX cadastrada</div>
+        <button class="botao-alterar" onclick="abrirModalPix()">Alterar Chave PIX</button>
+      </div>
+    </div>
+
+    <div class="plano-container">
+      <div class="plano-titulo">PLANO ATUAL</div>
+      <div class="info-valor" id="plano-atual">Básico</div>
+      <button class="botao-alterar" id="botao-alterar-plano" onclick="alternarPlanos()">ALTERAR PLANO</button>
+    </div>
+
+    <div class="planos-opcoes" id="planos-opcoes">
+      <div class="plano-opcao vip1" id="vip1">
+        <div class="plano-titulo-opcao">VIP 1</div>
+        <ul class="plano-beneficios">
+          <li>Aumento para 25 cupons diários</li>
+          <li>Aumento dos lucros em até 10%</li>
+          <li>Receba cupons melhores em relação ao básico</li>
+        </ul>
+        <div class="plano-botao-container">
+          <a href="https://go.perfectpay.com.br/PPU38CQ093D" class="plano-botao">Clique aqui para adquirir o VIP 1</a>
+        </div>
+      </div>
+      
+      <div class="plano-opcao vip2">
+        <div class="plano-titulo-opcao">VIP 2</div>
+        <ul class="plano-beneficios">
+          <li>Aumento para 50 cupons diários</li>
+          <li>Aumento dos lucros em até 25%</li>
+          <li>Receba cupons ainda melhores</li>
+          <li>Sorteios mensais para viagens nacionais</li>
+        </ul>
+        <div class="plano-botao-container">
+          <a href="https://go.perfectpay.com.br/PPU38CQ093K" class="plano-botao">Clique aqui para adquirir o VIP 2</a>
+        </div>
+      </div>
+      
+      <div class="plano-opcao elite">
+        <div class="plano-titulo-opcao">VIP 'ELITE'</div>
+        <ul class="plano-beneficios">
+          <li>Cupons diários ilimitados</li>
+          <li>Aumento dos lucros em até 50%</li>
+          <li>Receba os melhores cupons em prioridade</li>
+          <li>Sorteios SEMANAIS para viagens nacionais</li>
+          <li>Sorteios trimestrais para viagens internacionais</li>
+          <li>Convite para eventos com tudo incluso</li>
+          <li>Desbloqueio de todos recursos</li>
+        </ul>
+        <div class="plano-botao-container">
+          <a href="https://go.perfectpay.com.br/PPU38CQ093L" class="plano-botao">Clique aqui para adquirir o VIP ELITE</a>
+        </div>
+      </div>
+    </div>
+
+    <button class="botao-contato" onclick="redirecionarSuporte()">FALE CONOSCO</button>
+  </div>
+
+  <div class="modal" id="modal-pix">
+    <div class="modal-conteudo">
+      <span class="modal-fechar" onclick="fecharModalPix()">&times;</span>
+      <div class="modal-titulo">Alterar Chave PIX</div>
+      
+      <div class="pix-tipo">
+        <div class="pix-opcao" onclick="selecionarTipoPix('email')">E-mail</div>
+        <div class="pix-opcao" onclick="selecionarTipoPix('cpf')">CPF</div>
+        <div class="pix-opcao" onclick="selecionarTipoPix('telefone')">Telefone</div>
+        <div class="pix-opcao" onclick="selecionarTipoPix('aleatoria')">Aleatória</div>
+      </div>
+
+      <div class="pix-input-container">
+        <input type="text" class="pix-input" id="pix-input" placeholder="Digite sua nova chave PIX" oninput="validarInputPix()">
+      </div>
+
+      <button class="botao-salvar" onclick="salvarChavePix()">Salvar Nova Chave PIX</button>
+    </div>
+  </div>
+
+  <div class="ios-dock">
+    <a href="saque.html" class="dock-button">
+      <span class="dock-icon">💳</span>
+      <span class="dock-label">Saque</span>
+    </a>
+    <a href="cupons.html" class="dock-button">
+      <span class="dock-icon">🏠</span>
+      <span class="dock-label">Início</span>
+    </a>
+    <a href="conta.html" class="dock-button conta-selecionada">
+      <span class="dock-icon">👤</span>
+      <span class="dock-label">Conta</span>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      carregarDadosConta();
+      carregarSaldo();
+      carregarPlano();
+    });
+
+    function carregarDadosConta() {
+      try {
+        // Obtém o e-mail do localStorage (vindo da página de login)
+        const email = localStorage.getItem('userEmail') || 'Não informado';
+        const chavePix = localStorage.getItem('chavePix') || 'Nenhuma chave PIX cadastrada';
+        
+        document.getElementById('email-conta').textContent = email;
+        document.getElementById('pix-atual').textContent = chavePix;
+      } catch (e) {
+        console.error('Erro ao carregar dados da conta:', e);
+        document.getElementById('email-conta').textContent = 'Erro ao carregar e-mail';
+      }
+    }
+
+    function carregarSaldo() {
+      const saldo = localStorage.getItem('saldo') || '0';
+      document.getElementById('saldo').textContent = `R$${parseFloat(saldo).toFixed(2)}`;
+    }
+
+    function carregarPlano() {
+      const plano = localStorage.getItem('plano') || 'basico';
+      atualizarTextoPlano(plano);
+    }
+
+    function atualizarTextoPlano(plano) {
+      let textoPlano = '';
+      switch(plano) {
+        case 'basico':
+          textoPlano = 'Básico';
+          break;
+        case 'vip1':
+          textoPlano = 'VIP 1';
+          break;
+        case 'vip2':
+          textoPlano = 'VIP 2';
+          break;
+        case 'elite':
+          textoPlano = 'VIP ELITE';
+          break;
+        default:
+          textoPlano = 'Básico';
+      }
+      document.getElementById('plano-atual').textContent = textoPlano;
+    }
+
+    function alternarPlanos() {
+      const planosOpcoes = document.getElementById('planos-opcoes');
+      const botaoAlterar = document.getElementById('botao-alterar-plano');
+      
+      planosOpcoes.classList.toggle('ativo');
+      
+      if (planosOpcoes.classList.contains('ativo')) {
+        botaoAlterar.textContent = 'OCULTAR PLANOS';
+        
+        setTimeout(function() {
+          const vip1Element = document.getElementById('vip1');
+          if (vip1Element) {
+            vip1Element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 300);
+      } else {
+        botaoAlterar.textContent = 'ALTERAR PLANO';
+      }
+    }
+
+    function redirecionarSuporte() {
+      window.open('https://wa.me/exemplo', '_blank');
+    }
+
+    function abrirModalPix() {
+      document.getElementById('modal-pix').style.display = 'flex';
+      const tipoPix = localStorage.getItem('tipoPix') || 'email';
+      selecionarTipoPix(tipoPix, false);
+    }
+
+    function fecharModalPix() {
+      document.getElementById('modal-pix').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      const modalPix = document.getElementById('modal-pix');
+      
+      if (event.target === modalPix) {
+        fecharModalPix();
+      }
+    }
+
+    function selecionarTipoPix(tipo, salvar = true) {
+      const opcoes = document.querySelectorAll('.pix-opcao');
+      opcoes.forEach(opcao => opcao.classList.remove('selecionado'));
+      
+      const opcaoSelecionada = document.querySelector(`.pix-opcao[onclick*="'${tipo}'"]`);
+      if (opcaoSelecionada) {
+        opcaoSelecionada.classList.add('selecionado');
+      }
+      
+      const input = document.getElementById('pix-input');
+      input.value = '';
+      
+      input.disabled = false;
+      input.readOnly = false;
+      input.removeAttribute('maxlength');
+      input.removeAttribute('pattern');
+      
+      switch(tipo) {
+        case 'cpf':
+          input.placeholder = 'Digite seu CPF (xxx.xxx.xxx-xx)';
+          input.type = 'text';
+          input.maxLength = 14;
+          break;
+        case 'email':
+          input.placeholder = 'Digite seu e-mail';
+          input.type = 'text';
+          break;
+        case 'telefone':
+          input.placeholder = 'Digite seu telefone com DDD (xx) xxxxx-xxxx';
+          input.type = 'text';
+          input.maxLength = 15;
+          break;
+        case 'aleatoria':
+          input.placeholder = 'Digite sua chave aleatória';
+          input.type = 'text';
+          break;
+      }
+      
+      setTimeout(() => input.focus(), 50);
+      
+      if (salvar) {
+        localStorage.setItem('tipoPix', tipo);
+      }
+    }
+
+    function validarInputPix() {
+      const tipoPix = localStorage.getItem('tipoPix') || 'email';
+      const input = document.getElementById('pix-input');
+      
+      if (tipoPix === 'cpf') {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        
+        if (value.length > 9) {
+          value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+        } else if (value.length > 6) {
+          value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+        } else if (value.length > 3) {
+          value = value.replace(/(\d{3})(\d{1,3})/, "$1.$2");
+        }
+        
+        input.value = value;
+      } else if (tipoPix === 'telefone') {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        
+        if (value.length > 10) {
+          value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        } else if (value.length > 6) {
+          value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+        } else if (value.length > 2) {
+          value = value.replace(/(\d{2})(\d{0,5})/, "($1) $2");
+        }
+        
+        input.value = value;
+      }
+    }
+
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/\D/g, '');
+      
+      if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+      
+      let soma = 0;
+      let resto;
+      
+      for (let i = 1; i <= 9; i++) 
+        soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
+      
+      resto = (soma * 10) % 11;
+      
+      if ((resto === 10) || (resto === 11)) resto = 0;
+      if (resto !== parseInt(cpf.substring(9, 10))) return false;
+      
+      soma = 0;
+      for (let i = 1; i <= 10; i++) 
+        soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
+      
+      resto = (soma * 10) % 11;
+      
+      if ((resto === 10) || (resto === 11)) resto = 0;
+      if (resto !== parseInt(cpf.substring(10, 11))) return false;
+      
+      return true;
+    }
+
+    function validarEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    }
+
+    function salvarChavePix() {
+      const tipoPix = localStorage.getItem('tipoPix') || 'email';
+      let chavePix = document.getElementById('pix-input').value.trim();
+      
+      if (tipoPix === 'cpf') {
+        const cpfNumeros = chavePix.replace(/\D/g, '');
+        if (cpfNumeros.length !== 11 || !validarCPF(chavePix)) {
+          alert('Por favor, insira um CPF válido');
+          return;
+        }
+        chavePix = cpfNumeros;
+      } else if (tipoPix === 'telefone') {
+        const telefoneNumeros = chavePix.replace(/\D/g, '');
+        if (telefoneNumeros.length !== 11) {
+          alert('Telefone deve conter exatamente 11 dígitos numéricos (com DDD)');
+          return;
+        }
+        chavePix = telefoneNumeros;
+      } else if (tipoPix === 'email' && !validarEmail(chavePix)) {
+        alert('Por favor, insira um e-mail válido');
+        return;
+      } else if (chavePix === '') {
+        alert('Por favor, insira uma chave PIX válida');
+        return;
+      }
+      
+      localStorage.setItem('chavePix', chavePix);
+      document.getElementById('pix-atual').textContent = chavePix;
+      document.getElementById('pix-input').value = '';
+      fecharModalPix();
+      alert('Chave PIX atualizada com sucesso!');
+    }
+  </script>
+</body>
+</html>

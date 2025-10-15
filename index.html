@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CUPOM DA VEZ - Login</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: #fde910;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      border: 2px solid #000;
+    }
+
+    #logo {
+      width: 200px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    h1 {
+      color: #000;
+      font-size: 26px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: 0.3s;
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    input::placeholder {
+      color: #888;
+    }
+
+    input:focus {
+      border-color: #ff9900;
+      outline: none;
+      box-shadow: 0 0 8px #ff9900;
+    }
+
+    .error-message {
+      color: #ff0000;
+      font-size: 14px;
+      margin-top: -5px;
+      margin-bottom: 10px;
+      text-align: left;
+      display: none;
+      font-weight: bold;
+    }
+
+    button {
+      background: linear-gradient(to right, #000000, #333333);
+      color: #fde910;
+      padding: 16px;
+      border: none;
+      width: 100%;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s;
+      position: relative;
+      font-weight: bold;
+      border: 2px solid #000;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #ff9900, #fde910);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .loading-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(253, 233, 16, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid #fde910;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .cupom-icon {
+      font-size: 24px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @media screen and (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+
+      #logo {
+        width: 160px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="form-container">
+    <img id="logo" src="images/logo.png" alt="CUPOM DA VEZ">
+    <h1>Acesso ao Sistema</h1>
+    <p>Digite seu e-mail válido para entrar</p>
+    
+    <input type="email" id="email" placeholder="Seu e-mail" required>
+    <div class="error-message" id="email-error">Por favor, insira um e-mail válido</div>
+    
+    <button id="entrar-btn" onclick="fazerLogin()">
+      <span id="btn-text"><span class="cupom-icon">🎫</span> ACESSAR</span>
+      <div class="loading-spinner" id="loading-spinner"></div>
+    </button>
+  </div>
+
+  <script>
+    function validarEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    }
+
+    function mostrarCarregamento(mostrar) {
+      const btnText = document.getElementById('btn-text');
+      const spinner = document.getElementById('loading-spinner');
+      const entrarBtn = document.getElementById('entrar-btn');
+      
+      if (mostrar) {
+        btnText.style.visibility = 'hidden';
+        spinner.style.display = 'block';
+        entrarBtn.disabled = true;
+      } else {
+        btnText.style.visibility = 'visible';
+        spinner.style.display = 'none';
+        entrarBtn.disabled = false;
+      }
+    }
+
+    function fazerLogin() {
+      const email = document.getElementById('email').value.trim();
+      const emailError = document.getElementById('email-error');
+      
+      emailError.style.display = 'none';
+      
+      if (!email) {
+        emailError.textContent = 'Por favor, informe seu e-mail';
+        emailError.style.display = 'block';
+        return;
+      }
+      
+      if (!validarEmail(email)) {
+        emailError.textContent = 'Por favor, insira um e-mail válido';
+        emailError.style.display = 'block';
+        return;
+      }
+      
+      mostrarCarregamento(true);
+      
+      setTimeout(() => {
+        try {
+          localStorage.setItem('userEmail', email);
+          window.location.href = "cupons.html";
+        } catch (e) {
+          mostrarCarregamento(false);
+          alert('Erro ao salvar seus dados. Verifique as configurações do seu navegador.');
+        }
+      }, 1000);
+    }
+
+    window.onload = () => {
+      try {
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+          window.location.href = "cupons.html";
+        }
+      } catch (e) {
+        console.error('Erro ao acessar localStorage:', e);
+      }
+      
+      document.body.style.opacity = 0;
+      document.body.style.transition = 'opacity 0.5s ease-in';
+      
+      setTimeout(() => {
+        document.body.style.opacity = 1;
+      }, 100);
+      
+      document.getElementById('email').focus();
+      
+      document.getElementById('email').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          fazerLogin();
+        }
+      });
+    };
+  </script>
+</body>
+</html>
